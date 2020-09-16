@@ -1,4 +1,13 @@
+
 import codecs
+
+def check_float(st):
+    try:
+        float(st)
+    except ValueError:
+        return False
+    else:
+        return float(st)
 
 
 def get_car_list(filename):
@@ -9,17 +18,21 @@ def get_car_list(filename):
         for _ in range(count):
             line = file.readline()
             line = line.replace('\n', '')
+            line = line.replace('\r', '')
             info = line.split(';')
-            print(info)
-            if info[0] == 'car':
-                car = Car(info[0], info[1], info[3], info[2], info[5])
-                car_list.append(car)
-            elif info[0] == 'truck':
-                car = Truck(info[0], info[1], info[3], info[2], info[4])
-                car_list.append(car)
-            elif info[0] == 'spec_machine':
-                car = Truck(info[0], info[1], info[3], info[2], info[6])
-                car_list.append(car)
+            if len(info)>=6 and info[1]!='':
+                if check_float(info[5]) and info[3]!='':
+                    if info[0] == 'car':
+                        if info[2].isdigit():
+                            car = Car(info[0], info[1], info[3], float(info[5]), int(info[2]))
+                            car_list.append(car)
+                    elif info[0] == 'truck':
+                        car = Truck(info[0], info[1], info[3], float(info[5]), info[4])
+                        car_list.append(car)
+                    elif info[0] == 'spec_machine':
+                        if len(info) >= 7:
+                            car = Specmachine(info[0], info[1], info[3], float(info[5]), info[6])
+                            car_list.append(car)
 
     return car_list
 
@@ -32,7 +45,7 @@ class Carbase:
         self.carrying = carrying
 
     def __str__(self):
-        return self.brand + ' ' + self.car_type + ' ' + self.photo_le_name + ' ' + str(self.carrying)
+        return self.car_type+ ' ' + self.brand  + ' ' + self.photo_le_name + ' ' + str(self.carrying)
 
     def __repr__(self):
         return self.__str__()
